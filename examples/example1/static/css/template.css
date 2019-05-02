@@ -1,0 +1,22 @@
+body {
+  margin: auto;
+  max-width: 900px;
+}
+
+header {
+  background-color: antiquewhite;
+  padding: 0 10px;
+}
+
+header .container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header nav>* {
+  text-decoration: none;
+  color: pink;
+  margin-right: 50px;
+}
