@@ -4,6 +4,7 @@ from db_config import mysql
 from flask import jsonify
 from flask import flash, request
 from werkzeug import generate_password_hash, check_password_hash
+from flask_cors import cross_origin
 
 def add_user():
     conn = mysql.connect()
@@ -15,7 +16,7 @@ def add_user():
         _email = _json['email']
         _password = _json['pwd']
         # validate the received values
-        if _name and _email and _password and request.method == 'POST':
+        if _name and _email and _password:
             #do not save password as a plain text
             _hashed_password = generate_password_hash(_password)
             # save edits
@@ -25,6 +26,7 @@ def add_user():
             conn.commit()
             resp = jsonify('User added successfully!')
             resp.status_code = 200
+            resp.headers.add('Access-Control-Allow-Origin', '*')
             return resp
         else:
             return not_found()
@@ -42,7 +44,7 @@ def update_user():
         _email = _json['email']
         _password = _json['pwd']
         # validate the received values
-        if _name and _email and _password and _id and request.method == 'POST':
+        if _name and _email and _password and _id:
             #do not save password as a plain text
             _hashed_password = generate_password_hash(_password)
             # save edits
@@ -92,8 +94,7 @@ def delete_user(id):
 
 @app.route('/api/user', methods=['POST'])
 def adduser():
-    if request.method == 'POST':
-        return add_user()
+    return add_user()
 
 @app.route('/api/users')
 def users():
