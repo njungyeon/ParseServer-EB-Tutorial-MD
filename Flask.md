@@ -67,8 +67,8 @@ Successfully installed virtualenv-16.5.0
 > python3 -m venv env
 Running virtualenv with interpreter /Library/Frameworks/Python.framework/Versions/3.7/bin/python3
 Using base prefix '/Library/Frameworks/Python.framework/Versions/3.7'
-New python executable in /Users/jeffkang/Documents/Projects/Tutorials/ParseServer-EB-Tutorial-MD/sandbox/exampleproject/bin/python3
-Also creating executable in /Users/jeffkang/Documents/Projects/Tutorials/ParseServer-EB-Tutorial-MD/sandbox/exampleproject/bin/python
+New python executable in /Users/USERNAME/Documents/Projects/Tutorials/ParseServer-EB-Tutorial-MD/sandbox/examples/bin/python3
+Also creating executable in /Users/USERNAME/Documents/Projects/Tutorials/ParseServer-EB-Tutorial-MD/sandbox/examples/bin/python
 Installing setuptools, pip, wheel...
 done.
 ```
@@ -157,7 +157,7 @@ env2/bin/pip install -r requirements.txt
 
 `/projects/env` 를 통해 가상환경 설정폴더는 소스 관리에서 제외시키고, requirements.txt 를 통해 모듈의 인스톨, 삭제를 관리합니다.
 
-## Flask 어플리케이션 생성
+## Flask 어플리케이션 생성 (example1)
 
 app.py
 
@@ -386,7 +386,6 @@ templates/about.html
 templates/template.html
 
 ```html
-
 <!-- Start template.html -->
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -394,7 +393,7 @@ templates/template.html
 <head>
   <meta charset="utf-8">
   <title>Template</title>
-  <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
 </head>
 
 <body>
@@ -403,10 +402,8 @@ templates/template.html
       <h1 class="logo">First Web App</h1>
       <strong>
         <nav>
-          <ul class="menu">
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('about') }}">About</a></li>
-          </ul>
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('about') }}">About</a>
         </nav>
       </strong>
     </div>
@@ -459,3 +456,599 @@ templates/home.html
 
 {% endblock %}
 ```
+
+`python app.py`를 통해 실행후 확인해보세요.
+
+view page source 옵션을 통해 페이지 내용이 어떻게 보이는지 확인하세요.
+
+이것은 home.html과 about.html에서 `extends "template.html"`을 통해 tempalte 페이지를 가져와 확장하는 방식으로 페이지를 구성하였습니다.
+
+### CSS 파일로 꾸미기
+
+templates 폴더를 만든 것처럼 static 폴더를 만들 것입니다. 이 곳에는 css, JavaScript, images 등의 파일들을 넣어 사용할 수 있습니다.
+
+이번 챕터에서는 template.html에 있던 이 코드를 통해 css를 적용해 볼 것입니다.
+
+```html
+<link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
+```
+
+static/css/template.css
+
+```css
+body {
+  margin: auto;
+  max-width: 900px;
+}
+
+header {
+  background-color: antiquewhite;
+  padding: 0 10px;
+}
+
+header .container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header nav>* {
+  text-decoration: none;
+  color: pink;
+  margin-right: 50px;
+}
+```
+
+바로 적용이 되는 것을 볼 수 있습니다.
+
+![flask1](images/flask1.png)
+
+### 이미지 등 파일 로드하기
+
+ css를 사용했던 것과 마찬가지로 이미지 또한 사용이 가능합니다. 실행하는 app.py 기준으로 절대주소를 사용할 수도 있으며 url_for또한 사용할 수 있습니다.
+
+templates/home.html
+
+```html
+{% extends "template.html" %}
+{% block content %}
+
+<title>Flask Tutorial</title>
+
+<h1> My First Try Using Flask </h1>
+<p> Flask is Fun </p>
+
+<img src="/static/images/쯔위.jpg">
+
+<img src="{{url_for('static', filename='images/쯔위.jpg')}}">
+
+{% endblock %}
+```
+
+![flask2](images/flask2.png)
+
+## FLASK로 REST API 작성하기 (example2)
+
+최근 들어서는 앱서버에서 템플릿을 통해 서비스를 운영하는 방식에서 백엔드와 프론트엔드를 분리하여 API를 호출하여 응답을 처리하는 SPA(Single Page Application) 방식을 많이 사용하고 있습니다. 특히 모바일 애플리케이션 서비스의 경우 서버사이드와 완전히 분리가 되어 있기 때문에 위에서 해온 방식으로는  서비스를 만들 수가 없습니다.
+
+그러므로 여기서는 간단하게 REST API 방식으로 Flask 서버를 사용해 보겠습니다.
+
+일단 새로운 프로젝트를 진행할 폴더를 만들어주세요.
+
+### REST? RESTful?
+
+REST에서 제일 중요한 컨셉은 일반적으로 URI를 사용해서 리소스에 대한 정보를 요청하는 방식입니다. 클라이언트 애플리케이션에서 GET, POST, PUT, DELETE 등의 HTTP 메쏘드를 사용하여 리소스에 대한 요청을 보내고, RESTful 웹 서비스에서는 그에 상응하는 리소스 응답을 주게 됩니다.
+
+HTTP 메소드는 리소스의 CRUD와 매치되게 되며 각 방식은 다음과 같습니다.
+
+- GET: Read
+- POST: Create
+- PUT: Update
+- DELETE: Delete
+
+### 데이터베이스 생성하기
+
+간단한 무료 호스팅을 이용하여 MySQL 데이터베이스를 사용해보도록 하겠습니다.
+
+https://remotemysql.com/
+
+에서 바로 발급되는 데이터베이스 서버를 저장하세요.
+
+![flask3](images/flask3.png)
+
+그 후  https://remotemysql.com/phpmyadmin/ 를 통해 해당 서버에 접속할 수 있습니다.
+
+이제 쿼리를 통해 유저 데이터베이스를 생성해보도록 하곘습니다.
+
+```sql
+CREATE TABLE `flask_user` (
+  `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_email` varchar(45) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `user_password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+```
+
+![flask4](images/flask4.png)
+
+앞으로 사용할 데이터베이스가 완성되었습니다.
+
+### app.py 생성
+
+app.py
+
+```
+from flask import Flask
+
+app = Flask(__name__)
+```
+
+기본적인 flask 인스턴스입니다.
+
+### 데이터베이스 연결하기
+
+```py
+> pip install flask-mysql
+```
+
+db_config.py
+
+```py
+from flask import Flask
+from flaskext.mysql import MySQL
+from app import app
+
+mysql = MySQL()
+
+# MySQL configurations
+app.config['MYSQL_DATABASE_USER'] = 'user'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+app.config['MYSQL_DATABASE_DB'] = 'dbname'
+app.config['MYSQL_DATABASE_HOST'] = 'hosturl'
+app.config['MYSQL_DATABASE_PORT'] = 3306 # Default 3306
+
+mysql.init_app(app)
+```
+
+위와 같이 앞에서 만든 데이터베이스 정보를 입력합니다.
+
+### REST API 서버 실행하기
+
+이제 새로운 파일을 만들고 클라이언트의 요청을 받아 데이터베이스에서 알맞은 동작을 수행 후 응답해주는 동작을 구현해보겠습니다.
+
+restapi.py
+
+```py
+# import pymysql
+from app import app
+from db_config import mysql
+from flask import jsonify
+from flask import flash, request
+from werkzeug import generate_password_hash, check_password_hash
+
+@app.route('/api/user', methods=['POST'])
+def add_user():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        _json = request.json
+        _name = _json['name']
+        _email = _json['email']
+        _password = _json['pwd']
+        # validate the received values
+        if _name and _email and _password and request.method == 'POST':
+            #do not save password as a plain text
+            _hashed_password = generate_password_hash(_password)
+            # save edits
+            sql = "INSERT INTO flask_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
+            data = (_name, _email, _hashed_password,)
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('User added successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+
+@app.route('/api/users')
+def users():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM flask_user")
+        rows = cursor.fetchall()
+        resp = jsonify(rows)
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+
+@app.route('/api/user/<int:id>')
+def user(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM flask_user WHERE user_id=%s", id)
+        row = cursor.fetchone()
+        resp = jsonify(row)
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+
+@app.route('/api/update', methods=['POST'])
+def update_user():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        _json = request.json
+        _id = _json['id']
+        _name = _json['name']
+        _email = _json['email']
+        _password = _json['pwd']
+        # validate the received values
+        if _name and _email and _password and _id and request.method == 'POST':
+            #do not save password as a plain text
+            _hashed_password = generate_password_hash(_password)
+            # save edits
+            sql = "UPDATE flask_user SET user_name=%s, user_email=%s, user_password=%s WHERE user_id=%s"
+            data = (_name, _email, _hashed_password, _id,)
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('User updated successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/delete/')
+def delete_user(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM flask_user WHERE user_id=%s", (id,))
+        conn.commit()
+        resp = jsonify('User deleted successfully!')
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.errorhandler(404)
+def not_found(error=None):
+    message = {
+        'status': 404,
+        'message': 'Not Found: ' + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 404
+
+    return resp
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+메쏘드별로 코드를 살펴보고
+Postman을 통해 테스트를 해보겠습니다.
+
+유저 추가
+![flask5](images/flask5.png)
+
+유저 리스트 확인
+![flask6](images/flask6.png)
+
+개별 유저 확인 및 유저 삭제, 업데이트도 해보세요.
+
+### REST API 식으로 바꾸기
+
+앞에 REST API의 개념에 대해 설명한 것과 같이 코드를 수정하여 동작하도록 해보겠습니다.
+
+```py
+# import pymysql
+from app import app
+from db_config import mysql
+from flask import jsonify
+from flask import flash, request
+from werkzeug import generate_password_hash, check_password_hash
+
+def add_user():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        _json = request.json
+        _name = _json['name']
+        _email = _json['email']
+        _password = _json['pwd']
+        # validate the received values
+        if _name and _email and _password and request.method == 'POST':
+            #do not save password as a plain text
+            _hashed_password = generate_password_hash(_password)
+            # save edits
+            sql = "INSERT INTO flask_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
+            data = (_name, _email, _hashed_password,)
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('User added successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+
+def update_user():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        _json = request.json
+        _id = _json['id']
+        _name = _json['name']
+        _email = _json['email']
+        _password = _json['pwd']
+        # validate the received values
+        if _name and _email and _password and _id and request.method == 'POST':
+            #do not save password as a plain text
+            _hashed_password = generate_password_hash(_password)
+            # save edits
+            sql = "UPDATE flask_user SET user_name=%s, user_email=%s, user_password=%s WHERE user_id=%s"
+            data = (_name, _email, _hashed_password, _id,)
+            cursor.execute(sql, data)
+            conn.commit()
+            resp = jsonify('User updated successfully!')
+            resp.status_code = 200
+            return resp
+        else:
+            return not_found()
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_user(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM flask_user WHERE user_id=%s", id)
+        row = cursor.fetchone()
+        resp = jsonify(row)
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+
+def delete_user(id):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("DELETE FROM flask_user WHERE user_id=%s", (id,))
+        conn.commit()
+        resp = jsonify('User deleted successfully!')
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/user', methods=['POST'])
+def adduser():
+    if request.method == 'POST':
+        return add_user()
+
+@app.route('/api/users')
+def users():
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM flask_user")
+        rows = cursor.fetchall()
+        resp = jsonify(rows)
+        resp.status_code = 200
+        return resp
+    except Exception as e:
+        print(e)
+
+@app.route('/api/user/<int:id>', methods=['GET', 'DELETE', 'PUT'])
+def user(id):
+    if request.method =='GET':
+        return get_user(id)
+    elif request.method == 'PUT':
+        return update_user(id)
+    elif request.method == 'DELETE':
+        return delete_user(id)
+
+@app.errorhandler(404)
+def not_found(error=None):
+    message = {
+        'status': 404,
+        'message': 'Not Found: ' + request.url,
+    }
+    resp = jsonify(message)
+    resp.status_code = 404
+
+    return resp
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+한층 더 RESTful 해진 api입니다. `/api/user/<id>` 를 통해 유저를 조회, 수정, 삭제를 할 수 있으며 `/api/user`에 POST 요청을 통해 유저를 생성할 수도 있습니다.
+
+
+## 웹페이지와 REST Api를 이용한 통신
+
+이번 장에서는 앞에서 만든 REST Api를 이용해 프론트엔드에서 HTTP 요청을 통해 통신을 해보도록 하겠습니다.
+
+### Same-Origin Policy
+
+> 자바스크립트 엔진 표준 스펙의 보안 규칙 중 하나이다. 자바스크립트는 자신이 속한 동일한 출처의 페이지에만 서버 요청을 허용하고 처리해 주며, 다른 출처의 서버에 요청하는 것을 보안 문제로 간주하고 차단한다. 여기서 동일한 출처(same origin)란 같은 프로토콜, 같은 호스트, 같은 포트를 사용한다는 것이다.
+
+
+### CORS(Cross-Origin Resource Sharing)
+
+다른 도메인(domains)에서의 자원을 호출하는 행위에 제한이 없을 경우 안전하지 않습니다. CORS (Cross-Origin Resource Sharing)는 이렇게 시스템 수준에서 타 도메인 간 자원 호출을 승인하거나 차단하는 것을 결정하는 것입니다
+
+다른 도메인간의 리소스를 주고받는것을 허용, 혹은 차단하는 설정
+
+한마디로 보안 문제때문에 기본적으로는 다른 도메인으로부터의 HTTP 요청은 막혀있습니다.
+
+### 웹페이지
+
+일단 간단한 테스트용 웹페이지를 생성해 보도록 하겠습니다. 프론트엔드용 폴더를 하나 만들어주시고 그곳에 index.html 파일을 생성해주세요.
+
+index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="index.css"> -->
+
+    <title>Flask Rest API</title>
+</head>
+
+<body>
+    <header>
+        <h1>Example</h1>
+        <div id="result"></div>
+    </header>
+
+    <div class="contents adduser">
+        <input id="name" type="text" placeholder="Write name">
+        <input id="email" type="text" placeholder="email">
+        <input id="password" type="password" placeholder="password">
+        <button onclick="addUserSelected()">Submit</button>
+    </div>
+
+    <div class="contents">
+        <button onclick="getusers()">GetUsers</button>
+        <div id='response'>
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    async function getusers() {
+        const res = await fetch('http://127.0.0.1:5000/api/users', {
+            method: "GET", // POST, PUT, DELETE, etc.
+        });
+
+        const result = await res.json();
+        console.log(result);
+
+        const ele = document.getElementById('response');
+        result.forEach(element => {
+            const div = document.createElement('div');ㄴ
+            div.innerHTML =
+                `<div class='id'>ID: ${element[0]}</div><div class='name'>Name: ${element[1]}</div><div class='email'>Email: ${element[2]}</div>`;
+            div.className = 'item';
+            ele.append(div);
+        });
+    }
+
+    function addUserSelected() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        return addUser(name, email, password);
+    }
+
+    async function addUser(name, email, password) {
+        try {
+            const res = await fetch('http://127.0.0.1:5000/api/user', {
+                method: "POST", // POST, PUT, DELETE, etc.
+                headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json;charset=UTF-8" // for a string body, depends on body
+                },
+                // mode: "cors",
+                body: JSON.stringify({
+                    name,
+                    email,
+                    pwd: password,
+                })
+            });
+
+            console.log(res);
+
+            if (res.status == 200) {
+                const ele = document.getElementById('result');
+                ele.innerHTML = '유저가 성공적으로 등록되었습니다. ';
+            }
+
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+</script>
+```
+
+유저를 등록하거나 등록된 유저들의 리스트를 가져올 수 있는 간단한 웹사이트입니다.
+Flask 서버를 동작시킨 상태에서 실행해보세요.
+
+![flask7](images/flask7.png)
+
+일반적으로 CORS 이슈 때문에 에러가 나게 됩니다.
+
+### 서버에서 CORS 허용하기
+
+Flask 에서 CORS 요청을 허용하기 위해 추가작업이 필요합니다.
+
+```
+> pip install flask-cors
+```
+
+app.py
+```py
+from flask import Flask
+from flask_cors import CORS
+
+app = Flask(__name__)
+cors = CORS(app, resources={
+  r"/v1/*": {"origin": "*"},
+  r"/api/*": {"origin": "*"},
+})
+```
+
+이제 어떤 곳에서든 우리의 Flask 서버에 요청을 보낼 수 있습니다.
+
+## Conclusion
+
+지금까지 Flask 프레임워크를 이용해 웹애플리케이션 서버를 생성해보고, REST API 서버로도 활용을 해 보았으며 데이터베이스, 프론트엔드와의 연동을 해 보았습니다.
+
+이제 배운것을 응용하여 프론트엔드에서 특정 유저를 update 혹은 delete 하는 동작 등을 추가해보실 수 있을겁니다.

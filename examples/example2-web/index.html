@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="index.css"> -->
+
+    <title>Flask Rest API</title>
+</head>
+
+<body>
+    <header>
+        <h1>Example</h1>
+        <div id="result"></div>
+    </header>
+
+    <div class="contents adduser">
+        <input id="name" type="text" placeholder="Write name">
+        <input id="email" type="text" placeholder="email">
+        <input id="password" type="password" placeholder="password">
+        <button onclick="addUserSelected()">Submit</button>
+    </div>
+
+    <div class="contents">
+        <button onclick="getusers()">GetUsers</button>
+        <div id='response'>
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    async function getusers() {
+        const res = await fetch('http://127.0.0.1:5000/api/users', {
+            method: "GET", // POST, PUT, DELETE, etc.
+        });
+
+        const result = await res.json();
+        console.log(result);
+
+        const ele = document.getElementById('response');
+        result.forEach(element => {
+            const div = document.createElement('div');
+            div.innerHTML =
+                `<div class='id'>ID: ${element[0]}</div><div class='name'>Name: ${element[1]}</div><div class='email'>Email: ${element[2]}</div>`;
+            div.className = 'item';
+            ele.append(div);
+        });
+    }
+
+    function addUserSelected() {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        return addUser(name, email, password);
+    }
+
+    async function addUser(name, email, password) {
+        try {
+            const res = await fetch('http://127.0.0.1:5000/api/user', {
+                method: "POST", // POST, PUT, DELETE, etc.
+                headers: {
+                    'Accept': 'application/json',
+                    "Content-Type": "application/json;charset=UTF-8" // for a string body, depends on body
+                },
+                // mode: "cors",
+                body: JSON.stringify({
+                    name,
+                    email,
+                    pwd: password,
+                })
+            });
+
+            console.log(res);
+
+            if (res.status == 200) {
+                const ele = document.getElementById('result');
+                ele.innerHTML = '유저가 성공적으로 등록되었습니다. ';
+            }
+
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    }
+</script>
