@@ -162,6 +162,18 @@ AWS Identity and Access Management의 약자로서 액세스 키를 사용하여
 
 이제 CLI를 사용할 수 있는 유저를 생성하고 Access Key와 Secret Key를 발급받았습니다.
 
+### 미리 주어진 계정을 사용할 경우
+
+1. IAM
+2. Dashboard
+3. Rotate your access key
+4. Manage your key
+5. Security Credential
+6. Access keys
+
+순으로 가서 확인 가능합니다.
+
+
 ## EB CLI를 사용하여 로컬환경에 EB 정보 추가
 
 이제 EB CLI를 사용할 준비가 되었습니다. 다음 과정을 통해 EB 설정을 해봅시다.
