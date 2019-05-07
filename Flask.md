@@ -975,7 +975,7 @@ index.html
 
         const ele = document.getElementById('response');
         result.forEach(element => {
-            const div = document.createElement('div');ㄴ
+            const div = document.createElement('div');
             div.innerHTML =
                 `<div class='id'>ID: ${element[0]}</div><div class='name'>Name: ${element[1]}</div><div class='email'>Email: ${element[2]}</div>`;
             div.className = 'item';
