@@ -797,7 +797,7 @@ def add_user():
     except Exception as e:
         print(e)
 
-def update_user():
+def update_user(id):
     conn = mysql.connect()
     cursor = conn.cursor()
 
