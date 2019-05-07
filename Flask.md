@@ -808,7 +808,7 @@ def update_user(id):
         _email = _json['email']
         _password = _json['pwd']
         # validate the received values
-        if _name and _email and _password and _id and request.method == 'POST':
+        if _name and _email and _password and _id and request.method == 'PUT':
             #do not save password as a plain text
             _hashed_password = generate_password_hash(_password)
             # save edits
