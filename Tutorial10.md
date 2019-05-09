@@ -614,8 +614,6 @@ pages/index.html
 
 1.	index.html 페이지 접속시에 로그인한 유저가 보유한 아이돌 주식내역을 화면에 리스트로 보여주는 서버 api를 생성하세요.
 
-#### 힌트
-
 js/parseApi.js
 
 ```js
@@ -679,7 +677,7 @@ index.html 에서 사용할 코드
   showPurchasedItem();
 ```
 
-서버에서 사용할 코드
+!!서버에서 사용할 코드(과제), 아래를 참고하여 작성해주세요.
 
 cloud/functions/index.js
 
@@ -713,7 +711,7 @@ Parse.Cloud.define('getUserItemList', async (req) => {
 
 
 1. POSTMAN으로 테스트
-2. 클라이언트에 적용할 경우 보너스
+2. 실제 클라이언트로 테스트
 
 #### 힌트
 'purchastItem' api 를 참고하세요.
@@ -758,11 +756,55 @@ Parse.Cloud.define('sellUserItem', async (req) => {
   }
 ```
 
+js/parseApis.js
+
+```js
+  // 과제2: 유저가 보유한 아이템을 하나씩 판매하는 API를 서버에 구현해보고 테스트해보세요.
+  // 유저가 보유한 주식을 판매하는 요청을 서버에 보내고 응답을 받는 함수
+  static async sellUserItem(objectId) {
+    try {
+      const result = await Parse.Cloud.run('sellUserItem', { objectId: objectId });
+      if (result) {
+        return  result.toJSON();
+      } else {
+        throw 'Something Wrong';
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+```
+
+index.html에서
+
+유저 아이템 판매 버튼인
+```html
+<button class="sell-button sell" onclick="sell('${objectId}')">Sell</button>
+```
+를 통해 아래 코드가 수행됩니다.
+
+pages/index.html
+
+```js
+  // js/parseApis.js 의 sellUserItem을 호출하고 응답을 받아 유저가 보유한 아이템 갯수를 갱신하는 함수
+  async function sell(id) {
+    const ele = document.getElementById(id);
+
+    try {
+      const result = await ParseApi.sellUserItem(id);
+      console.log(result);
+
+      ele.querySelector('.quantity').innerHTML = '보유 수량: ' + result.count;
+    } catch (error) {
+      alert(error);
+    }
+  }
+```
+
 ### 3. 여러 수량 한꺼번에 구매하기
 
-현재는 한번에 하나의 수량만 구매할 수 있도록 프론트가 구현이 되어 있습니다. 이것을 갯수를 선택해서 구매할 수 있도록 편집해보세요.
-힌트는 idol-list.js, index.html 파일 그리고 `purchaseItem` API입니다.
-
+현재는 한번에 하나의 수량만 구매할 수 있도록 웹페이지가 구현이 되어 있습니다. 이것을 갯수를 선택해서 구매할 수 있도록 웹페이지를 편집해보세요.
+힌트는 idol-list.js, index.html 파일입니다. 현재 사용중인 서버 api는 `purchaseItem` API입니다.
 
 
 ## Conclusion
