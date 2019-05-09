@@ -48,12 +48,12 @@ Parse.serverURL = 'http://localhost:1337/parse/';
 
 또한,
 Parse SDK를 사용하면 `Parse.Cloud.run`을 통해 fetch를 사용하지 않고 간단하게 특정 클라우드 함수를 실행할 수 있습니다.
-가령 기존 `signup` 의 경우 fetch 대신 `Parse.Cloud.run('signup', {username, password})` 를 사용 가능합니다.
+가령 기존 `signUp` 의 경우 fetch 대신 `Parse.Cloud.run('signUp', {username, password})` 를 사용 가능합니다.
 
 기존 코드
 
 ```js
-const response = await fetch(ParseURL + 'signup', {
+const response = await fetch(ParseURL + 'signUp', {
   method: "POST",
   headers: FETCH_HEADERS,
   body: JSON.stringify({
@@ -66,7 +66,7 @@ const response = await fetch(ParseURL + 'signup', {
 Parse SDK 사용
 
 ```js
-const response = await Parse.Cloud.run('signup', {username, password});
+const response = await Parse.Cloud.run('signUp', {username, password});
 ```
 
 
@@ -82,7 +82,7 @@ Parse Server 프로젝트에서
 `cloud/functions/index.js`
 
 ```js
-Parse.Cloud.define('signup', async (req) => {
+Parse.Cloud.define('signUp', async (req) => {
   const user = new Parse.User();
   const username = req.params.username;
   const password = req.params.password;

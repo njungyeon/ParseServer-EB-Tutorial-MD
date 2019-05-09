@@ -400,9 +400,20 @@ async function getIdolList() {
 }
 ```
 
+이제 다시 기존 templates/idol-list.html  파일에 다음을 추가합니다.
+
+```html
+...
+
+<script src='../js/parseApis.js'></script>
+<script src='./idol-list.js'></script>
+<script>
+  getIdolList();
+</script>
+```
+
 서버로부터 가져온 데이터를 통해 element를 생성하는게 확인되시나요?
 코드를 이해하고 넘어갈 수 있도록 해주세요.
-
 
 ## Conclusion
 
@@ -411,6 +422,12 @@ async function getIdolList() {
 - 외부에서 백엔드 api를 호출해 데이터 응답 확인
 
 자 여기까지 데이터베이스에 직접 데이터를 넣어 보고 외부에서 API 호출을 통해 데이터값을 받는것을 해 보았습니다. 다음 과정에는 실제로 로그인 로직을 구현하고 화면을 구성하도록 하겠습니다.
+
+## 과제
+
+1. 지금까지 만든 서버를 AWS EB 에 배포하고,
+2. Parse Dashboard를 이용해 AWS DB에 새로 Character 테이블(클래스)를 추가한뒤 내용을 채우고
+3. 방금 만든 웹페이지를 사용해 AWS EB 서버와 통신하여 데이터베이스의 내용을 출력해보세요.
 
 ## 참조
 
