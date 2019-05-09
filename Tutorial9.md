@@ -7,6 +7,7 @@ Parse에는 로그인, 로그아웃, 회원가입 뿐 아니라 기본적인 데
 참고로 저희가 만든 기존 NodeJS 서버에서는 이미 Parse SDK를 사용하고 있습니다.
 
 ### 다운로드
+
 순수 JavaScript용 파일은 https://docs.parseplatform.org/js/guide/#getting-started 의 npmcdn 에서 다운로드 가능합니다.
 
 `parse.min.js`를 다운받아 `parseApis.js`가 있는 js폴더에 넣어주도록 하겠습니다. 그 후 사용할 페이지에서 로드를 해주세요.
@@ -472,7 +473,7 @@ UserCharacter에 해당 유저가 소유한 Character 정보가 저장된 것을
 
 ![User Character Test](./images/usercharacter_test.png)
 
-
+지금까지 만든 코드를 완벽히 이해하고 넘어가세요. DB를 어떤식으로 연결하고 다루는지 이해하는 것이 중요합니다.
 
 ## Conclusion
 

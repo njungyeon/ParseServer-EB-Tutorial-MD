@@ -208,6 +208,7 @@ pages/index.html
 </html>
 ```
 
+Javascript 코드를 유의깊게 보세요.
 로그인 스크립트를 살짝 수정하여 에러 메세지가 alert창을 통해 출력되도록 하였습니다.
 
 cs/login.css
@@ -498,10 +499,11 @@ pages/index.html후
 
 ### 5. 아이돌 주식 유저 구매 연동하기
 
-이제 유저가 아이돌의 주식을 구매하면 해당 주식을 유저와 연결하고 리스트로 출력해 보도록 하겠습니다.
+이제 클라이언트(웹페이지)에서 유저가 아이돌의 주식을 구매하는 코드를 작성해봅시다.
 
 앞에서 `purchaseItem` 등 서버에서 필요한 동작은 미리 구현이 되어 있으므로 클라이언트만 구현하면 됩니다.
 
+js/parseApis.js
 
 ```js
 static async purchaseItem({objectId, count}) {
@@ -510,7 +512,7 @@ static async purchaseItem({objectId, count}) {
     if (result) {
       return  result.toJSON();
     } else {
-      return {};
+      throw 'Something Wrong';
     }
   } catch (error) {
     throw error;
@@ -518,7 +520,7 @@ static async purchaseItem({objectId, count}) {
 }
 ```
 
-기존 idol-list.js에서 생성하는 엘레먼트에 `<button class="buy-button">Buy</button>` 을 추가해줍니다.
+기존 idol-list.js에서 생성하는 엘레먼트에 `<button class="buy-button" onclick="purchaseItem('${objectId}')">Buy</button>` 을 추가해줍니다.
 
 templates/idol-list.js
 
@@ -544,13 +546,22 @@ const { name, price, group, description, count, imgUrl,  objectId} = element; //
 
 코드를 이해하고 넘어가세요.
 
-templates/idol-list.css 에 css 역시 추가해줍니다.
+templates/idol-list.css 에 css 역시 추가해줍니다. 구매 버튼 말고 차후 사용할수 있는 sell-button 관련 스타일도 추가해주겠습니다.
+
+templates/idol-list.css
 
 ```css
 ...
 .img-title-tag-list .item .buy-button {
     border: none;
     background: var(--lightish-blue);
+    color: white;
+    font-size: 20px;
+}
+
+.img-title-tag-list .item .sell-button {
+    border: none;
+    background: red;
     color: white;
     font-size: 20px;
 }
@@ -591,65 +602,168 @@ pages/index.html
 
 ## 과제
 
-여러 브라우져를 띄워 다른 아이디로 로그인 한 후 동작을 확인해보세요. 서로 다른 유저들이 제품 구매를 할 수 있나요?
+![homework](images/homework.png)
+
 
 지금까지 배운것을 응용하면 여러가지 기능을 구현할 수 있습니다. 그 중 서버에 이미 구현이 되어 있는 API를 활용해 추가적인 작업을 진행해보세요.
 
-### 1. 여러 수량 한꺼번에 구매하기
-
-현재는 한번에 하나의 수량만 구매할 수 있도록 구현이 되어 있습니다. 이것을 갯수를 선택해서 구매할 수 있도록 편집해보세요.
-힌트는 idol-list.js, index.html 파일 그리고 `purchaseItem` 함수입니다.
-
-### 2. 유저가 구매한 내역을 화면에 보여주기
+### 1. 유저가 구매한 내역을 화면에 보여주기
 
 유저의 구매 내역을 출력하는 코드는 이미 구현이 되어 있고 Postman을 통해 응답값을 확인할 수 있었습니다.
 메인 페이지에 유저의 구매 내역을 출력하는 코드를 작성해보세요.
 
-1.	페이지 접속시에 유저 정보가 있으면 유저가 보유한 아이돌 주식내역을 보여주세요
-2.	구매 후 해당 정보를 갱신해주세요.
+1.	index.html 페이지 접속시에 로그인한 유저가 보유한 아이돌 주식내역을 화면에 리스트로 보여주는 서버 api를 생성하세요.
 
 #### 힌트
 
-parseApis.js에서 사용할 함수
-`Parse.Cloud.run('getUserItemList');`
+js/parseApi.js
 
-응답값 예시
+```js
+//   과제:  유저가 구매한 아이템 리스트를 서버에게 요청하고 응답값을 json으로 바꿔 배열로 리턴한다.
+static async getUserItemList() {
+  try {
+    const response = await Parse.Cloud.run('getUserItemList', {});
+    let result = [];
+    console.log('getUserItemList', response);
+    if (response) {
+        response.forEach(element => {
+        result.push(element.toJSON());
+      });
 
-```json
-{
-    "result": [
-        {
-            "createdAt": "2019-02-15T07:28:35.825Z",
-            "updatedAt": "2019-02-15T07:36:56.113Z",
-            "character": {
-                "createdAt": "2019-01-28T08:06:27.564Z",
-                "updatedAt": "2019-05-05T09:33:06.716Z",
-                "name": "Sana",
-                "imgUrl": "https://aa.com/abc.jpg",
-                "price": 3500,
-                "count": 888,
-                "description": "트와이스 일본 멤버",
-                "group": "Twice",
-                "objectId": "UKA8o2SXnG",
-                "__type": "Object",
-                "className": "Character"
-            },
-            "user": {
-                "__type": "Pointer",
-                "className": "_User",
-                "objectId": "dSsLEEJQQA"
-            },
-            "count": 11,
-            "objectId": "eu2AnRLqdp",
-            "__type": "Object",
-            "className": "UserCharacter"
-        },
-        {
-          ...
-        }
-    ]
+      return  result;
+    } else {
+      throw 'Something Wrong';
+    }
+  } catch (error) {
+    throw error;
+  }
 }
 ```
+
+index.html 에서 사용할 코드
+
+```js
+  // 유저가 구매한 아이템 리스트를 화면에 출력해준다.
+  async function showPurchasedItem() {
+    const container = document.getElementById('purchased-list');
+    const result = await ParseApi.getUserItemList();
+
+    let htmls = [];
+    result.forEach(element => {
+        const { count, objectId } = element;
+        const { name, price, group, description, imgUrl} = element.character;
+
+       const html =  `<div class="item row-container" id="${objectId}">` +
+        `<img src="${imgUrl}" class="profile">` +
+        `<div class="column-container">` +
+            `<div class="title idol-Name">${name}</div>` +
+            `<div class="description">${description}</div>` +
+            `<div class="tags Hashtag">` +
+                `<span class="tag">${group}</span>` +
+            `</div>` +
+        `</div>` +
+        `<div class="column-container subinfo-container">` +
+            `<span class="Sub-Text quantity">보유 수량: ${count}</span>` +
+            `<span class="Sub-Text">$${price}</span>` +
+        `</div>` +
+        `<button class="sell-button sell" onclick="sell('${objectId}')">Sell</button>` +
+    `</div>`;
+
+    const e = document.createElement('div');
+    e.innerHTML = html;
+
+    container.appendChild(e);
+    });
+  }
+
+  showPurchasedItem();
+```
+
+서버에서 사용할 코드
+
+cloud/functions/index.js
+
+```js
+
+// 요청한 유저가 보유하고 있는 UserCharacter 데이터를 리턴한다.
+Parse.Cloud.define('getUserItemList', async (req) => {
+  const user = req.user;
+
+  if (user == null) {
+    throw Error('There is no user');
+  }
+
+  const UserCharacter = Parse.Object.extend('UserCharacter'); // Get class from database
+  ????? // TODO: 클래스로부터 쿼리를 생성한다.
+  query.equalTo('??????', (??????); // TODO: 요청한 유저가 보유한 아이템만을 선택해야 한다.
+  query.include('character');
+
+  try {
+    const result = await query.find(); // Get all datas
+    return result;
+  } catch (error) {
+    throw error;
+  }
+});
+```
+
+### 2. 유저가 보유한 아이템 판매하는 기능
+
+유저가 보유한 아이템을 하나씩 판매하는 API를 서버에 구현해보고 테스트해보세요.
+
+
+1. POSTMAN으로 테스트
+2. 클라이언트에 적용할 경우 보너스
+
+#### 힌트
+'purchastItem' api 를 참고하세요.
+
+cloud/function/index.js
+
+```js
+// 과제2: 유저가 보유한 아이템을 하나씩 판매하는 API를 서버에 구현해보고 테스트해보세요.
+// 힌트: 'purchaseItem' Api를 참고
+Parse.Cloud.define('sellUserItem', async (req) => {
+  const user = req.user;
+  const objectId = req.params.objectId;
+
+  if (user == null) {
+    throw Error('There is no user');
+  }
+
+  const UserCharacter = Parse.Object.extend('UserCharacter'); // Get class from database
+  let userCharacter = new UserCharacter();
+
+  // TODO: obejectId를 통해 유저가 보유한 아이템을 매치시킨다.
+  ?????
+  // TODO: 매치한 아이템 정보를 DB로부터 불러온다.
+  ?????
+
+  let originalCharacter = await userCharacter.get('character').fetch(); // character 포인터 정보를 가져온다.
+  const characterPrice = originalCharacter.get('price'); // character 가격 정보를 가져온다.
+
+  try {
+    const count = userCharacter.get('count');
+    if (count <= 0) {
+      throw Error('Not enought quantity');
+    }
+    ????? // TODO: 오리지널 아이템(아이돌) 갯수를 1만큼 늘린다.
+    ????? // TODO: 유저가 보유한 아이템(아이돌) 갯수를 1만큼 감소시킨다.
+    ????? // TODO: 유저가 보유한 캐쉬를 아이템 가격만큼 늘린다.
+
+    await user.save(null, {useMasterKey: true});
+    return userCharacter.save(); // 유저가 보유한 아이템 정보를 저장 후 리턴한다.
+  } catch (error) {
+    throw Error(error);
+  }
+```
+
+### 3. 여러 수량 한꺼번에 구매하기
+
+현재는 한번에 하나의 수량만 구매할 수 있도록 프론트가 구현이 되어 있습니다. 이것을 갯수를 선택해서 구매할 수 있도록 편집해보세요.
+힌트는 idol-list.js, index.html 파일 그리고 `purchaseItem` API입니다.
+
+
 
 ## Conclusion
 
