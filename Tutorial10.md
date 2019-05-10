@@ -118,6 +118,94 @@ pages/index.html
 </html>
 ```
 
+
+css/index.css
+
+```css
+@import url(./default.css);
+@import url(../templates/header-footer.css);
+@import url(../templates/idol-list.css);
+
+.idol-lists-container {
+	margin-top: 80px;
+}
+
+.view-all-container {
+	justify-content: space-between;
+	align-items: flex-end;
+	color: var(--brown-grey);
+}
+
+.view-all-container a {
+	display: flex;
+	align-items: center;
+}
+
+.space-between {
+	justify-content: space-between;
+}
+
+.category {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around
+}
+
+.category .container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 315px;
+	margin-top: 53px;
+	/* border: 1px solid; */
+}
+
+.category .container .title-text {
+	font-family: aritadsb;
+	font-size: 22px;
+	color: #646464;
+	width: 305px;
+}
+
+.category .container .subtitle {
+	text-align: left;
+	width: 305px;
+	margin-top: 9px;
+}
+
+.category .container > .img-title-tag-list {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin-top: 20px;
+}
+
+.new-idol-container {
+	margin-top: 80px;
+}
+
+.new-idol-container .img-title-list {
+	margin-top: 51px;
+}
+
+.spotlight-container {
+	margin-top: 80px;
+}
+
+.spotlight-container .img-desc-list {
+	margin-top: 40px;
+}
+
+.community-container {
+	margin-top: 80px;
+}
+
+.footer {
+	margin-top: 100px;
+}
+```
+
 ### 2. 로그인 화면 만들기
 
 이제 회원가입, 로그인, 로그아웃 을 적용하도록 하겠습니다.
