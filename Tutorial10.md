@@ -783,7 +783,7 @@ Parse.Cloud.define('getUserItemList', async (req) => {
 
   const ????? = Parse.Object.extend('?????'); // Get class from database table
   const query = ????? // TODO: 클래스로부터 쿼리를 생성한다.
-  // TODO: 요청한 유저가 보유한 아이템만을 선택해야 한다.
+  ????? // TODO: 요청한 유저가 보유한 아이템만을 선택해야 한다.
   query.include('character');
 
   try {
