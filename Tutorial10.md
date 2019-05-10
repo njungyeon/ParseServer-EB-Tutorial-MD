@@ -691,7 +691,7 @@ Parse.Cloud.define('getUserItemList', async (req) => {
     throw Error('There is no user');
   }
 
-  const UserCharacter = Parse.Object.extend('UserCharacter'); // Get class from database
+  const ????? = Parse.Object.extend('?????'); // Get class from database table
   ????? // TODO: 클래스로부터 쿼리를 생성한다.
   query.equalTo('??????', (??????); // TODO: 요청한 유저가 보유한 아이템만을 선택해야 한다.
   query.include('character');
@@ -806,6 +806,10 @@ pages/index.html
 현재는 한번에 하나의 수량만 구매할 수 있도록 웹페이지가 구현이 되어 있습니다. 이것을 갯수를 선택해서 구매할 수 있도록 웹페이지를 편집해보세요.
 힌트는 idol-list.js, index.html 파일입니다. 현재 사용중인 서버 api는 `purchaseItem` API입니다.
 
+### 4. 여러 수량 한꺼번에 판매하기
+
+2번과제는 현재 하나의 수량씩 판매가 되도록 되어 있습니다.
+이것을 여러 수량을 한꺼번에 판매하도록 서버 API를 편집하고 웹페이지에서 동작하도록 수정해보세요.
 
 ## Conclusion
 
