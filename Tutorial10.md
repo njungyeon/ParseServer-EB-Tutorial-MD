@@ -612,6 +612,8 @@ pages/index.html
 유저의 구매 내역을 출력하는 코드는 이미 구현이 되어 있고 Postman을 통해 응답값을 확인할 수 있었습니다.
 메인 페이지에 유저의 구매 내역을 출력하는 코드를 작성해보세요.
 
+- 코드 완성 및 프론트엔드(웹페이지) 동작 스크린샷
+
 1.	index.html 페이지 접속시에 로그인한 유저가 보유한 아이돌 주식내역을 화면에 리스트로 보여주는 서버 api를 생성하세요.
 
 js/parseApi.js
@@ -692,8 +694,8 @@ Parse.Cloud.define('getUserItemList', async (req) => {
   }
 
   const ????? = Parse.Object.extend('?????'); // Get class from database table
-  ????? // TODO: 클래스로부터 쿼리를 생성한다.
-  query.equalTo('??????', (??????); // TODO: 요청한 유저가 보유한 아이템만을 선택해야 한다.
+  const query = ????? // TODO: 클래스로부터 쿼리를 생성한다.
+  // TODO: 요청한 유저가 보유한 아이템만을 선택해야 한다.
   query.include('character');
 
   try {
@@ -709,6 +711,7 @@ Parse.Cloud.define('getUserItemList', async (req) => {
 
 유저가 보유한 아이템을 하나씩 판매하는 API를 서버에 구현해보고 테스트해보세요.
 
+- 코드 완성 및 프론트엔드 동작 스크린샷
 
 1. POSTMAN으로 테스트
 2. 실제 클라이언트로 테스트
@@ -738,7 +741,7 @@ Parse.Cloud.define('sellUserItem', async (req) => {
   ?????
 
   let originalCharacter = await userCharacter.get('character').fetch(); // character 포인터 정보를 가져온다.
-  const characterPrice = originalCharacter.get('price'); // character 가격 정보를 가져온다.
+  const characterPrice = ????? // character 가격 정보를 가져온다.
 
   try {
     const count = userCharacter.get('count');
@@ -801,15 +804,17 @@ pages/index.html
   }
 ```
 
-### 3. 여러 수량 한꺼번에 구매하기
+### 3. 여러 수량 한꺼번에 판매하기
+
+2번과제는 현재 하나의 수량씩 판매가 되도록 되어 있습니다.
+이것을 여러 수량을 한꺼번에 판매하도록 서버 API를 편집하고 포스트맨에서 테스트해보고 응답값을 스크린샷으로 찍어주세요.
+
+### 4. 여러 수량 한꺼번에 구매하기 (보너스)
 
 현재는 한번에 하나의 수량만 구매할 수 있도록 웹페이지가 구현이 되어 있습니다. 이것을 갯수를 선택해서 구매할 수 있도록 웹페이지를 편집해보세요.
 힌트는 idol-list.js, index.html 파일입니다. 현재 사용중인 서버 api는 `purchaseItem` API입니다.
 
-### 4. 여러 수량 한꺼번에 판매하기
-
-2번과제는 현재 하나의 수량씩 판매가 되도록 되어 있습니다.
-이것을 여러 수량을 한꺼번에 판매하도록 서버 API를 편집하고 웹페이지에서 동작하도록 수정해보세요.
+프론트엔드 코드만 수정하면 됩니다.
 
 ## Conclusion
 
