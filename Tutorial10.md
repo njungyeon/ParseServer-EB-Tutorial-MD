@@ -730,6 +730,14 @@ static async getUserItemList() {
 
 index.html 에서 사용할 코드
 
+```html
+<div class="container">
+  <div class="img-title-tag-list" id="purchased-list">
+    <!-- 유저가 구매한 내역을 담을 영역 -->
+  </div>
+</div>
+```
+
 ```js
   // 유저가 구매한 아이템 리스트를 화면에 출력해준다.
   async function showPurchasedItem() {
