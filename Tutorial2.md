@@ -78,7 +78,7 @@ sudo -u postgres psql
 
 
 
-데이터 베이스 리스트 확인
+데이터 베이스 리스트 확인 (현재 접속한 데이터베이스 이름이 사용됨)
 ```
 postgres> \list
 ```
