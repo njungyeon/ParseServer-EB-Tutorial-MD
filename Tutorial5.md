@@ -124,6 +124,12 @@ EB CLI 설치
 $ pip install awsebcli --upgrade --user
 ```
 
+
+
+```sh
+eb --version
+```
+
 ## EB CLI 사용을 위한 IAM 계정 생성
 
 ### IAM이란
