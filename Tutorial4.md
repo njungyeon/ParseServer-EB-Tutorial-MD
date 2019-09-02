@@ -53,6 +53,14 @@ $ npm run start:local
 parse-server running on port 1337
 ```
 
+Window의 경우 
+
+```
+$env:NODE_ENV="production"
+
+yarn start
+```
+
 1337 포트에서 파스 서버가 실행되었습니다.
 
 브라우져에서 localhost:1337 로 접속하면 public폴더에 미리 넣어 놓은 index.html 파일을 확인할 수 있습니다.
