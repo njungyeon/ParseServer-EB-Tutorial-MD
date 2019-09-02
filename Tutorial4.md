@@ -56,7 +56,7 @@ parse-server running on port 1337
 Window의 경우 
 
 ```
-$env:NODE_ENV="production"
+$env:NODE_ENV="local"
 
 yarn start
 ```
