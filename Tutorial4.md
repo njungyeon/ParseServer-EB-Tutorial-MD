@@ -23,6 +23,9 @@ localDatabaseURI를
 `postgres://POSTGRES_USERNAME:PASSWORD@localhost:5432/dbname`
 에서 POSTGRES_USERNAME 과 PASSWORD 부분을 맞게 변경해주시면 됩니다.
 
+Example
+`postgres://postgres:PASSWORD@localhost:5432/tutorial`
+
 
 ```json
 {
